@@ -1,4 +1,5 @@
 import random
+import requests
 import streamlit as st
 import streamlit.components.v1 as components
 
@@ -6,6 +7,33 @@ import streamlit.components.v1 as components
 st.set_page_config(
     page_title="Icfes interactivo 2027", page_icon="🎓", layout="wide"
 )
+
+# CONFIGURACIÓN WHATSAPP (CallMeBot configurado con tu número)
+MI_NUMERO_WHATSAPP = "573007318439"
+MI_API_KEY_WHATSAPP = (  # <-- Reemplaza "TU_API_KEY" con la clave que te envió el bot por WhatsApp
+    "TU_API_KEY"
+)
+
+
+def enviar_alerta_whatsapp(puntaje, desglose):
+    try:
+        mensaje = (
+            f"🎓 *¡Simulacro ICFES Finalizado!*\n\n"
+            f"Ricardo Toro ha completado la prueba.\n"
+            f"🎯 *Puntaje Global:* {round(puntaje)} / 500 pts\n\n"
+            f"📊 *Desglose por área:*\n"
+        )
+        for area, datos in desglose.items():
+            mensaje += (
+                f"- {area}: {datos['correctas']}/20"
+                f" ({round(datos['puntaje'])} pts)\n"
+            )
+
+        url = f"https://api.callmebot.com/whatsapp.php?phone={MI_NUMERO_WHATSAPP}&text={requests.utils.quote(mensaje)}&apikey={MI_API_KEY_WHATSAPP}"
+        requests.get(url)
+    except Exception as e:
+        print(f"Error al enviar WhatsApp: {e}")
+
 
 # 1. Saludo de voz automatizado para Ricardo Toro al cargar la página
 voz_script = """
@@ -30,7 +58,7 @@ st.markdown(
     " por componente)"
 )
 
-# Definir las 5 áreas oficiales del ICFES en orden de simulación
+# Definir las 5 áreas oficiales del ICFES
 AREAS_ICFES = [
     "Lectura Crítica",
     "Matemáticas",
@@ -130,88 +158,6 @@ def generar_banco_verdadero(comp):
                         " supera a cualquier otro conductor de calor conocido."
                     ),
                 ),
-                (
-                    "El origen del mal (Tolstói)",
-                    (
-                        "En un bosque vivía un ermitaño que entendía el lenguaje"
-                        " de las fieras. Se cobijaron allí un cuervo, un"
-                        " palomo, un ciervo y una serpiente, y discutieron"
-                        " sobre el origen del mal. El cuervo culpaba al hambre;"
-                        " el palomo al amor; la serpiente a la ira; el ciervo al"
-                        " miedo. Finalmente intervino el ermitaño: 'No es el"
-                        " hambre, el amor, la ira ni el miedo la fuente de"
-                        " nuestros males, sino nuestra propia naturaleza'."
-                    ),
-                    (
-                        "¿Qué papel cumple la intervención final del ermitaño"
-                        " en el texto?"
-                    ),
-                    [
-                        (
-                            "A. Respaldar la postura del cuervo afirmando que"
-                            " el hambre es inevitable."
-                        ),
-                        (
-                            "B. Sintetizar y trascender las posturas anteriores"
-                            " proponiendo una causa raíz común y profunda."
-                        ),
-                        (
-                            "C. Demostrar que los animales poseen la razón"
-                            " absoluta frente al ser humano."
-                        ),
-                        (
-                            "D. Invalidar por completo los sentimientos de las"
-                            " fieras del bosque."
-                        ),
-                    ],
-                    1,
-                    (
-                        "El ermitaño agrupa todas las causas parciales"
-                        " mencionadas por los animales y las atribuye a una"
-                        " condición inherente: nuestra propia naturaleza."
-                    ),
-                ),
-                (
-                    "La contaminación marina",
-                    (
-                        "Debido a la inmensidad de los océanos, hasta hace poco"
-                        " se creía que podían ser utilizados para verter"
-                        " sustancias de forma ilimitada. Los partidarios tienen"
-                        " un eslogan: 'La solución a la contaminación es la"
-                        " dilución'. Hoy en día, zonas muertas y extensiones"
-                        " gigantes de plástico demuestran que esta ideología ha"
-                        " llevado al borde del colapso los ecosistemas."
-                    ),
-                    (
-                        "¿Cuál de los siguientes enunciados se opone"
-                        " directamente (antítesis) al argumento central del"
-                        " texto?"
-                    ),
-                    [
-                        (
-                            "A. La respuesta al problema de la contaminación"
-                            " es la dilución."
-                        ),
-                        (
-                            "B. Las iniciativas de protección marítima son casi"
-                            " inexistentes."
-                        ),
-                        (
-                            "C. Los océanos han recibido desechos humanos"
-                            " durante siglos."
-                        ),
-                        (
-                            "D. Los humanos han advertido la insostenibilidad de"
-                            " la dilución."
-                        ),
-                    ],
-                    0,
-                    (
-                        "La tesis central refuta la dilución; por lo tanto,"
-                        " su antítesis directa es sostener que la solución a la"
-                        " contaminación sí es la dilución."
-                    ),
-                ),
             ]
             t = temas_lc[(i - 1) % len(temas_lc)]
             lectura = (
@@ -268,24 +214,6 @@ def generar_banco_verdadero(comp):
                         " haber 12 blancas, su probabilidad es mayor."
                     ),
                 ),
-                (
-                    (
-                        "Una fábrica calcula los costos e ingresos diarios"
-                        " mediante funciones dependientes del número x de"
-                        " camisetas vendidas:\n- Costos: C(x) = 300x + 12.000\n-"
-                        f" Ingresos: I(x) = 900x (Modelo #{i})."
-                    ),
-                    (
-                        "¿Cuántas camisetas se deben vender en un día para"
-                        " alcanzar el punto de equilibrio?"
-                    ),
-                    ["A. 40", "B. 20", "C. 15", "D. 10"],
-                    1,
-                    (
-                        "Igualando C(x) = I(x): 300x + 12.000 = 900x, despejando"
-                        " 600x = 12.000, por lo tanto x = 20 unidades."
-                    ),
-                ),
             ]
             t = temas_mat[(i - 1) % len(temas_mat)]
             lectura = f"**CONTEXTO MATEMÁTICO - SITUACIÓN #{i}**\n\n{t[0]}"
@@ -334,41 +262,7 @@ def generar_banco_verdadero(comp):
                         " uso del hongo actúa como alternativa biológica"
                         " directa sin requerir hornos de quema."
                     ),
-                ),
-                (
-                    (
-                        "Un grupo de estudiantes analiza el movimiento de una"
-                        " moto y encuentra que se modela con la ecuación: v(t)"
-                        " = 5 + 4t, donde v(t) es la velocidad en m/s y t el"
-                        f" tiempo en segundos (Prueba #{i})."
-                    ),
-                    "De acuerdo con el modelo, ¿cómo es el movimiento de la moto?",
-                    [
-                        (
-                            "A. Con velocidad constante, porque se mantiene en"
-                            " 5 m/s."
-                        ),
-                        (
-                            "B. Uniformemente acelerado, porque la velocidad"
-                            " aumenta linealmente con el tiempo y su"
-                            " aceleración es de 4 m/s²."
-                        ),
-                        (
-                            "C. Con velocidad nula, ya que el tiempo inicial es"
-                            " cero."
-                        ),
-                        (
-                            "D. Uniformemente retardado debido al factor"
-                            " temporal."
-                        ),
-                    ],
-                    1,
-                    (
-                        "La derivada de la velocidad respecto al tiempo"
-                        " representa la aceleración; al ser lineal v(t) = v_0 +"
-                        " at, la aceleración es constante (4 m/s²)."
-                    ),
-                ),
+                )
             ]
             t = temas_cn[(i - 1) % len(temas_cn)]
             lectura = f"**CONTEXTO CIENTÍFICO - EXPERIMENTO #{i}**\n\n{t[0]}"
@@ -405,45 +299,7 @@ def generar_banco_verdadero(comp):
                         " sindicatos; prohibir esta iniciativa vulnera la libre"
                         " asociación."
                     ),
-                ),
-                (
-                    (
-                        "Ante un repentino aumento de casos de corrupción, un"
-                        " grupo de ciudadanos propone eliminar todos los"
-                        " partidos políticos existentes y dejar un único"
-                        " movimiento político integrado por ellos, argumentando"
-                        f" que allí no hay corruptos (Situación #{i})."
-                    ),
-                    (
-                        "¿Por qué sería un problema fundamental para la"
-                        " democracia llevar a cabo esta propuesta?"
-                    ),
-                    [
-                        (
-                            "A. Porque la existencia de diversos partidos"
-                            " garantiza la representación de los diferentes"
-                            " intereses de la sociedad."
-                        ),
-                        (
-                            "B. Porque al acabarse los partidos no habría"
-                            " suficientes edificios públicos en el país."
-                        ),
-                        (
-                            "C. Porque obligaría a que todos los empresarios"
-                            " asuman cargos ministeriales."
-                        ),
-                        (
-                            "D. No sería un problema, ya que un partido único"
-                            " acaba con la burocracia."
-                        ),
-                    ],
-                    0,
-                    (
-                        "El pluralismo político y la existencia de múltiples"
-                        " partidos son pilares esenciales de la democracia"
-                        " para reflejar la pluralidad de opiniones."
-                    ),
-                ),
+                )
             ]
             t = temas_soc[(i - 1) % len(temas_soc)]
             lectura = f"**CONTEXTO SOCIO-POLÍTICO - SITUACIÓN #{i}**\n\n{t[0]}"
@@ -483,26 +339,7 @@ def generar_banco_verdadero(comp):
                         " mano izquierda para dar o recibir cosas porque se"
                         " considera sucia culturalmente."
                     ),
-                ),
-                (
-                    (
-                        "Choose the correct response for the conversation:\n"
-                        "*Friend:* 'I don't think I'm going to enter the poster"
-                        f" competition.'\n*You:* '_________________' (Item #{i})"
-                    ),
-                    "Select the best conversational reply:",
-                    [
-                        ("A. Certainly!"),
-                        ("B. Good luck!"),
-                        ("C. What a pity!"),
-                    ],
-                    2,
-                    (
-                        "Ante una expresión de desaliento o decisión negativa de"
-                        " un amigo respecto a una competencia, la respuesta"
-                        " adecuada es 'What a pity!' (¡Qué lástima!)."
-                    ),
-                ),
+                )
             ]
             t = temas_ing[(i - 1) % len(temas_ing)]
             lectura = f"**READING COMPREHENSION - ITEM #{i}**\n\n{t[0]}"
@@ -528,7 +365,6 @@ if "banco_global" not in st.session_state:
         area: generar_banco_verdadero(area) for area in AREAS_ICFES
     }
 
-# Inicializar almacenamiento de respuestas y control de flujo
 if "respuestas_globales" not in st.session_state:
     st.session_state.respuestas_globales = {}
 
@@ -538,7 +374,9 @@ if "area_actual_idx" not in st.session_state:
 if "examen_finalizado" not in st.session_state:
     st.session_state.examen_finalizado = False
 
-# Seleccionar preguntas aleatorias de 20 ítems para cada área si no existen
+if "whatsapp_enviado" not in st.session_state:
+    st.session_state.whatsapp_enviado = False
+
 if "preguntas_simulacro" not in st.session_state:
     st.session_state.preguntas_simulacro = {
         area: random.sample(st.session_state.banco_global[area], 20)
@@ -550,13 +388,14 @@ if st.sidebar.button("🔄 Reiniciar Simulacro Completo"):
     st.session_state.respuestas_globales = {}
     st.session_state.area_actual_idx = 0
     st.session_state.examen_finalizado = False
+    st.session_state.whatsapp_enviado = False
     st.session_state.preguntas_simulacro = {
         area: random.sample(st.session_state.banco_global[area], 20)
         for area in AREAS_ICFES
     }
     st.rerun()
 
-# FLUJO PRINCIPAL: Si el examen no ha finalizado
+# FLUJO PRINCIPAL
 if not st.session_state.examen_finalizado:
     area_actual = AREAS_ICFES[st.session_state.area_actual_idx]
 
@@ -584,7 +423,6 @@ if not st.session_state.examen_finalizado:
             st.info(pregunta["lectura"])
             st.write(f"**Enunciado:** {pregunta['pregunta']}")
 
-            # Mantener vacías por defecto con index=None
             resp = st.radio(
                 "Selecciona tu respuesta:",
                 pregunta["opciones"],
@@ -594,7 +432,6 @@ if not st.session_state.examen_finalizado:
             st.session_state.respuestas_globales[pregunta["id"]] = resp
             st.divider()
 
-        # Texto dinámico del botón según el área
         siguiente_btn = (
             "Finalizar y Calcular Puntaje ICFES"
             if st.session_state.area_actual_idx == len(AREAS_ICFES) - 1
@@ -614,17 +451,8 @@ if not st.session_state.examen_finalizado:
                 st.session_state.examen_finalizado = True
                 st.rerun()
 
-# FLUJO DE RESULTADOS: Cuando finaliza las 5 áreas
+# FLUJO DE RESULTADOS
 else:
-    st.balloons()
-    st.header("🎯 ¡Simulacro ICFES Finalizado con Éxito!")
-    st.write(
-        "A continuación se presenta el consolidado de tu rendimiento y el"
-        " **Puntaje Global ICFES** estimado (escala oficial de 0 a 500"
-        " puntos):"
-    )
-
-    # Cálculo oficial de puntajes ponderados por área (escala 0 a 100 por área -> Total 500)
     puntaje_global_total = 0
     desglose_puntajes = {}
 
@@ -639,7 +467,6 @@ else:
                 if resp_dada == p["opciones"][p["correcta"]]:
                     correctas_area += 1
 
-        # Puntaje escalado de 0 a 100 para este componente
         puntaje_componente = (
             (correctas_area / total_area) * 100
             if total_area > 0
@@ -652,7 +479,19 @@ else:
         }
         puntaje_global_total += puntaje_componente
 
-    # Mostrar Tarjeta de Puntaje Global ICFES
+    # Enviar la alerta de WhatsApp una sola vez al finalizar
+    if not st.session_state.whatsapp_enviado:
+        enviar_alerta_whatsapp(puntaje_global_total, desglose_puntajes)
+        st.session_state.whatsapp_enviado = True
+
+    st.balloons()
+    st.header("🎯 ¡Simulacro ICFES Finalizado con Éxito!")
+    st.write(
+        "A continuación se presenta el consolidado de tu rendimiento y el"
+        " **Puntaje Global ICFES** estimado (escala oficial de 0 a 500"
+        " puntos):"
+    )
+
     st.markdown("---")
     col1, col2 = st.columns(2)
     with col1:
@@ -685,7 +524,7 @@ else:
         )
         st.progress(datos["puntaje"] / 100)
 
-    # Zona protegida con contraseña para revisar solucionario completo de las 5 áreas
+    # Zona protegida con contraseña para revisar solucionario completo
     st.sidebar.divider()
     st.sidebar.subheader("🔒 Zona de Respuestas y Explicaciones")
     codigo_ingresado = st.sidebar.text_input(
